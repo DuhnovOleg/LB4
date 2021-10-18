@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <conio.h>
 #include <time.h>
+#include <stack>
+using namespace std;
 
 typedef struct Node {
 	int data;
@@ -31,7 +33,7 @@ Node* add(Node* list, int num)
 	return temp;
 }
 
-int create_arr(int n)
+int** create_arr(int n)
 {
 	int s = 1;
 	int **Arr;
@@ -88,7 +90,7 @@ void DFS(int** Arr, int n, bool* Arr2, int i)
 	}
 }
 
-void Free(int** Arr, bool* Arr2, int n)
+void Free(int** Arr, bool* Arr2, int n, Node** sp1)
 {
 	for (int i = 0; i < n; i++)
 		free(Arr[i]);
@@ -119,7 +121,6 @@ void fun_spisok(Node** sp1, int n, int** Arr)
 
 void print_spisok(Node** sp1, int n)
 {
-	
 	for (int i = 0; i < n; i++)
 	{
 		Node* adr = sp1[i];
@@ -147,6 +148,38 @@ void DFS_spisok(Node** sp1, bool* Arr2, int n, int i)
 		j = sp1[i]->data;
 		if (Arr2[j] == false) 
 			DFS_spisok(sp1, Arr2, n, j);
+	}
+}
+
+void stk(int n, int i, int** Arr)
+{
+	stack<int> stk;
+	int* nodes, x;
+	nodes = (int*)malloc(n * sizeof(int));
+
+	for (int i = 0; i < n; i++)
+		nodes[i] = 0;
+	//printf("Введите вершину: ");
+	//scanf("%d", &x);
+
+	stk.push(0);
+	printf("\nРезультат обхода нерекурсивным способом: ");
+	while (!stk.empty())
+	{
+		int node = stk.top();
+		stk.pop();
+		if (nodes[node] == 2)
+			continue;
+		nodes[node] = 2;
+		for (int j = n - 1; j >= 0; j--)
+		{
+			if (Arr[node][j] == 1 && nodes[j] != 2)
+			{
+				stk.push(j);
+				nodes[j] = 1;
+			}
+		}
+		printf("%d ", node + 1);
 	}
 }
 
@@ -180,6 +213,8 @@ int main()
 		Arr2[i] = false;
 	DFS_spisok(sp1, Arr2, n, 0);
 
-	Free(t, Arr2, n);
+	stk(n, 0, t);
+
+	Free(t, Arr2, n, sp1);
 	_getch();
 }
