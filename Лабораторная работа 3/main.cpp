@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
-#include <stdbool.h>
 #include <conio.h>
 #include <time.h>
 #include <stack>
@@ -47,7 +46,7 @@ int** create_arr(int n)
 
 		for (int j = s; j < n; j++)
 		{
-			if (rand() % 100 > 60)
+			if (rand() % 100 > 10)
 			{
 				Arr[i][j] = 0;
 			}
@@ -151,19 +150,13 @@ void DFS_spisok(Node** sp1, bool* Arr2, int n, int i)
 	}
 }
 
-void stk(int n, int i, int** Arr)
+void stk(int n, int** Arr, int i, int* nodes)
 {
 	stack<int> stk;
-	int* nodes, x;
-	nodes = (int*)malloc(n * sizeof(int));
+	int x;
 
-	for (int i = 0; i < n; i++)
-		nodes[i] = 0;
-	//printf("Введите вершину: ");
-	//scanf("%d", &x);
-
-	stk.push(0);
-	printf("\nРезультат обхода нерекурсивным способом: ");
+	stk.push(i);
+	printf("\nResult komponenta: ");
 	while (!stk.empty())
 	{
 		int node = stk.top();
@@ -183,6 +176,19 @@ void stk(int n, int i, int** Arr)
 	}
 }
 
+void STK_K(int n, int** Arr)
+{
+	int* nodes = (int*)malloc(n * sizeof(int));
+	for (int i = 0; i < n; i++)
+		nodes[i] = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		if (nodes[i] == 0) 
+			stk(n, Arr, i, nodes);
+	}
+}
+
 int main()
 {
 	setlocale(LC_ALL, "Ru");
@@ -190,7 +196,7 @@ int main()
 	int n, **t;
 	bool* Arr2;
 
-	printf("Введите размер массива: ");
+	printf("Vvedite razmer arr: ");
 	scanf("%d", &n);
 
 	Node** sp1 = (Node**)malloc(n * sizeof(Node*));
@@ -200,7 +206,7 @@ int main()
 		Arr2[i] = false;
 	t = create_arr(n);
 
-	printf("\nРезультат обхода матрицы смежности: ");
+	printf("\nResult obhoda arr smachnosty: ");
 	DFS(t, n, Arr2, 0);
 
 	fun_init(sp1, n);
@@ -208,12 +214,12 @@ int main()
 	printf("\n");
 	print_spisok(sp1, n);
 
-	printf("\nРезультат обхода списка смежности: ");
+	printf("\nResult obhoda cherez sprisok: ");
 	for (int i = 0; i < n; i++)
 		Arr2[i] = false;
 	DFS_spisok(sp1, Arr2, n, 0);
 
-	stk(n, 0, t);
+	STK_K(n, t);
 
 	Free(t, Arr2, n, sp1);
 	_getch();
